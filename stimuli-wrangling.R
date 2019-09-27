@@ -21,7 +21,6 @@ tangramresults <- read_csv("tangramgameresults.csv") %>%
   mutate(type = if_else(nchar(leftpic) > 2, "practice", "test")) %>%
   mutate(trial = as.numeric(trial)+1) %>%
   filter(type == "test") %>%
-  select(subid, trial, target, leftpic, rightpic, correct) %>%
-  filter(trial <= 10 | trial >=31)
+  select(subid, trial, target, leftpic, rightpic, correct)
 
 stimuli <- left_join(filenames, tangramresults, by = c("subid","trial"))
