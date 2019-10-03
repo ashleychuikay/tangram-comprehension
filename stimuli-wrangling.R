@@ -23,4 +23,7 @@ tangramresults <- read_csv("tangramgameresults.csv") %>%
   filter(type == "test") %>%
   select(subid, trial, target, leftpic, rightpic, correct)
 
-stimuli <- left_join(filenames, tangramresults, by = c("subid","trial"))
+stimuli <- left_join(filenames, tangramresults, by = c("subid","trial")) %>%
+  filter(trial <= 10 | trial >= 31) %>%
+  mutate(person = if_else(trial <= 10, if_else(trial %% 2 == 0, "child", "parent"), 
+                          if_else(trial %% 2 == 0, "parent", "child")))
