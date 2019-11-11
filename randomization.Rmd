@@ -42,12 +42,13 @@ Constraints:
 *  each from a different subject pair
 
 ```{r setup-stims}
-stims <- stim_table %>%
+start_stims <- stim_table %>%
   group_by(subid, target) %>%
   arrange(trial) %>%
-  mutate(occurrence = 1:n()) 
+  mutate(occurrence = 1:n())  %>%
+  ungroup()
 
-nested_stims <- stims %>%
+nested_stims <- start_stims %>%
   group_by(occurrence, person, target) %>%
   nest() %>%
   rowwise() %>%
@@ -56,19 +57,67 @@ nested_stims <- stims %>%
 ```
 
 ```{r randomize}
-subjs <- tibble()
-
 randomize <- function() {
   
   for(i in 1: (floor(nrow(stims) / 10))) {
     
-    subj <- nested_stims %>%
-      select(-data) %>%
-      group_by(occurrence) %>%
-      sample_n(5, weight = rows) %>%
-      select(-rows)
+    print(i)
     
-    subj_data <- subj %>%
+    start <- nested_stims %>%
+      group_by(target) %>%
+      summarise(rows = sum(rows)) %>%
+      sample_n(10, weight = rows) %>%
+      select(-rows) %>%
+      left_join(nested_stims, by = "target") %>%
+      arrange(desc(rows)) %>%
+      group_by(target) %>%
+      slice(1) %>%
+      ungroup() %>%
+      arrange(rows) %>%
+      select(-data, -rows)
+
+    
+    occurrence_count <- start %>%
+      group_by(occurrence) %>%
+      count()
+    
+    one_diff <- 5 - occurrence_count %>% 
+      filter(occurrence == 1) %>% 
+      pull(n)
+    
+    one_start <- start %>%
+      filter(occurrence == 1)
+    
+    two_start <- start %>%
+      filter(occurrence == 2)
+    
+    if(one_diff < 0) {
+      one_change <- one_start %>%
+        slice(1:(-one_diff)) %>%
+        mutate(occurrence = 2) 
+      
+      start <- start %>%
+        anti_join(one_change, by = c("target", "person")) %>%
+        bind_rows(one_change)
+      
+    }
+    
+    if(is.na(one_diff)) {
+      one_diff <- 5
+    }
+    
+    if(one_diff > 0) {
+      two_change <- two_start %>%
+        slice(1:one_diff) %>%
+        mutate(occurrence = 1) 
+      
+      start <- start %>%
+        anti_join(two_change, by = c("target", "person")) %>%
+        bind_rows(two_change)
+      
+    }
+    
+    subj_data <- start %>%
       inner_join(stims, by = c("target", "person", "occurrence")) %>%
       group_by(target, person, occurrence) %>%
       sample_n(1)
@@ -90,6 +139,9 @@ randomize <- function() {
 ```
 
 ```{r out}
+subjs <- tibble()
+stims <- start_stims
+
 try(randomize(), silent = T)
 
 write_csv(subjs, here("output/random_stims.csv"))
