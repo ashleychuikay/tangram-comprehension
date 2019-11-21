@@ -20,7 +20,7 @@ checkInput: function() {
 
 var xhr = new XMLHttpRequest(),
     method = "GET",
-    url = "https://raw.githubusercontent.com/ashleychuikay/tangram-comprehension/master/output/random_stims.csv";
+    url = "https://https://cdn.jsdelivr.net/gh/ashleychuikay/tangramgamecomprehension@master/output/random_stims.csv";
 
 xhr.open(method, url, true);
 
@@ -154,10 +154,7 @@ function startExperiment() {
 
 	
 	// to start at beginning
-	setTimeout(function() {
-		console.log(globalGame.my_role);
-		globalGame.my_role=="speaker1" ? showSlide("instructions") : showSlide("childinstructions");
-	},900)
+	showSlide("instructions");
 };
 
 // MAIN EXPERIMENT
@@ -196,7 +193,14 @@ var experiment = {
 	//Slide before study begins
 	preStudy: function() {
 			showSlide('prestudy')
-		},
+	},
+
+	//the end of the experiment
+    end: function () {
+    	setTimeout(function () {
+    		$("#matcherstage").fadeOut();
+    	showSlide("finish");
+    },
 
     //concatenates all experimental variables into a string which represents one "row" of data in the eventual csv, to live in the server
 	processOneRow: function () {
@@ -303,9 +307,6 @@ var experiment = {
 
 		    console.log(experiment.chosenpic);
 
-			//what kind of trial was this?
-			//experiment.trialtype = allTrials[experiment.trialnum][0];
-
 			//Process the data to be saved
 			experiment.processOneRow();
 
@@ -315,21 +316,13 @@ var experiment = {
 				$(".pic").delay().fadeOut(1500);
 				document.getElementById("blank").click();
 				counter++
-				experiment.trialnum = counter;
 				console.log(counter)
-				console.log("matcher")
-				// globalGame.trialnum++
-				if (counter == 10|| counter == 20|| counter == 30) {
-					setTimeout(function() {
-						globalGame.trialnum++
-						experiment.matcherBreak()
-					}, 1000)
-				} else if (counter === numTrials) {
+				if (counter === numTrials) {
 					setTimeout(function() {experiment.end()}, 1000)
 					return;
 				} else {
 					setTimeout(function() {
-						experiment.directorStudy(counter);
+						experiment.matcherStudy(counter);
 					}, 1500);
 				}
 			}, 1000);
