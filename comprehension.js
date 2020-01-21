@@ -16,11 +16,26 @@ checkInput: function() {
 
 };
 
+// Read and select stimuli using D3
+
+d3.csv("https://cdn.jsdelivr.net/gh/ashleychuikay/tangram-comprehension@master/output/random_stims.csv", numconvert, function(csv) {
+	csv = csv.filter(function(row) {
+		return row[subject] == subid
+	})
+})
+
+function numconvert(d){
+	d.occurence = +d.occurence
+	d.subid = +d.subid
+	d.trial = +d.trial
+	d.subject = +d.subject
+}
+
 // Read in random stimuli
 
 var xhr = new XMLHttpRequest(),
     method = "GET",
-    url = "https://https://cdn.jsdelivr.net/gh/ashleychuikay/tangramgamecomprehension@master/output/random_stims.csv";
+    url = "https://cdn.jsdelivr.net/gh/ashleychuikay/tangram-comprehension@master/output/random_stims.csv";
 
 xhr.open(method, url, true);
 
@@ -98,9 +113,6 @@ getCurrentTime = function() {
 }
 
 //for trials
-
-var tangrams = ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "K1", "L1"];
-
 var wordList = [];
 var matcherList = [];
 var matcherImages = [];
