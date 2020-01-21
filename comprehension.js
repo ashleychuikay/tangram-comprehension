@@ -18,7 +18,7 @@ checkInput: function() {
 
 // Read and select stimuli using D3
 
-d3.csv("https://cdn.jsdelivr.net/gh/ashleychuikay/tangram-comprehension@master/output/random_stims.csv", numconvert, function(csv) {
+trials = d3.csv("https://cdn.jsdelivr.net/gh/ashleychuikay/tangram-comprehension@master/output/random_stims.csv", numconvert, function(csv) {
 	csv = csv.filter(function(row) {
 		return row[subject] == subid
 	})
@@ -31,20 +31,7 @@ function numconvert(d){
 	d.subject = +d.subject
 }
 
-// Read in random stimuli
-
-var xhr = new XMLHttpRequest(),
-    method = "GET",
-    url = "https://cdn.jsdelivr.net/gh/ashleychuikay/tangram-comprehension@master/output/random_stims.csv";
-
-xhr.open(method, url, true);
-
-xhr.onreadystatechange = function () {
-  if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-
-    trials = $.csv.toArrays(xhr.responseText);
-    
-    allTrials = new Array;
+allTrials = new Array;
 
     for(i=1; i<trials.length; i++) {
     	if(trials[i][9] == subid){
@@ -54,13 +41,42 @@ xhr.onreadystatechange = function () {
     	}
     };
 
-   shuffle(allTrials)
-   console.log(allTrials)
-   startExperiment(allTrials)
+  shuffle(allTrials)
+  console.log(allTrials)
+  startExperiment(allTrials)
 
-  };
-};
-xhr.send();
+
+
+// Read in random stimuli
+
+// var xhr = new XMLHttpRequest(),
+//     method = "GET",
+//     url = "https://cdn.jsdelivr.net/gh/ashleychuikay/tangram-comprehension@master/output/random_stims.csv";
+
+// xhr.open(method, url, true);
+
+// xhr.onreadystatechange = function () {
+//   if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+
+//     trials = $.csv.toArrays(xhr.responseText);
+    
+//     allTrials = new Array;
+
+//     for(i=1; i<trials.length; i++) {
+//     	if(trials[i][9] == subid){
+//     		allTrials.push(trials[i]);
+//     	} else {
+//     		return;
+//     	}
+//     };
+
+//    shuffle(allTrials)
+//    console.log(allTrials)
+//    startExperiment(allTrials)
+
+//   };
+// };
+// xhr.send();
 
 
 // disables all scrolling functionality to fix a slide in place on the ipad
@@ -222,7 +238,7 @@ var experiment = {
 		dataforRound += "," + experiment.side + "," + experiment.chosenpic + "," + experiment.response;
 		dataforRound += "," + experiment.date + "," + experiment.timestamp + "," + experiment.reactiontime + "\n";
 		console.log(dataforRound)
-		$.post("https://callab.uchicago.edu/experiments/tangramgame/gamecode/tangramgamesave.php", {postresult_string : dataforRound});	
+		$.post("https://callab.uchicago.edu/experiments/tangram-comprehension/gamecode/tangramcomprehensionsave.php", {postresult_string : dataforRound});	
 	},
 
 	//Comprehension game
