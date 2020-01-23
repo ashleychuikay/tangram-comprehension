@@ -162,7 +162,7 @@ function startExperiment() {
 	// load audio for each trial
 	for(i=0; i<allTrials.length; i++){
 		subAudio = allTrials[i].slice();
-		audio = new WebAudioAPISound('"' + subAudio.splice(3,1) + '"');
+		audio = new WebAudioAPISound('"audio/' + subAudio.splice(3,1) + '"');
 		trialAudio.push(audio);
 	};
 
@@ -206,16 +206,11 @@ var experiment = {
 	reactiontime: 0,
 		//time between start of trial and response 
 
-	
-	//Slide before study begins
-	preStudy: function() {
-			showSlide('prestudy')
-	},
 
 	//the end of the experiment
     end: function () {
     	setTimeout(function () {
-    		$("#matcherstage").fadeOut();
+    		$("#stage").fadeOut();
     	showSlide("finish");
     },
 
@@ -231,9 +226,9 @@ var experiment = {
 	},
 
 	//Comprehension game
-  	matcherStudy: function(counter) {
+  	study: function(counter) {
 
-		$("#prestudy").hide();
+		$("#instructions").hide();
 
 		// Create the object table for matcher (tr=table row; td= table data)
 
@@ -251,9 +246,6 @@ var experiment = {
 	  	objects_html += '</tr></table>';
 	    $("#objects").html(objects_html);
 		$("#stage").fadeIn();
-	    
-
-	    var startTime = (new Date()).getTime();
 
 		clickDisabled = true;
 		setTimeout(function() {
@@ -262,7 +254,8 @@ var experiment = {
 		},  1500);
 
 		trialAudio[counter].play()
-		
+
+		var startTime = (new Date()).getTime();		
 
 		$('.pic').on('click touchstart', function(event) {
 
@@ -282,9 +275,6 @@ var experiment = {
 
 			//time the participant clicked picture - the time the trial began
 	    	experiment.reactiontime = (new Date()).getTime() - startTime;
-
-	    	// Edit!! allTrials is the arrays of blocks
-	    	// experiment.parentchild = allTrials[experiment.trialnum][2];
 
 	    	//Add color to selected picture
 	    	var picID = $(event.currentTarget).attr('id');
@@ -309,7 +299,7 @@ var experiment = {
 	    	console.log(picID);
 
 	    	//remove the pictures from the image array that have been used, and the word from the wordList that has been used
-			matcherImages.splice(0, 2);
+			allImages.splice(0, 2);
 			wordList.splice(0, 1);
 
 			//If the child picked the picture that matched with the word, then they were correct. If they did not, they were not correct.
@@ -339,7 +329,7 @@ var experiment = {
 					return;
 				} else {
 					setTimeout(function() {
-						experiment.matcherStudy(counter);
+						experiment.study(counter);
 					}, 1500);
 				}
 			}, 1000);
