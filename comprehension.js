@@ -3,37 +3,6 @@
 // to start at beginning
 showSlide("instructions");
 
-// Read in random stimuli
-
-// var xhr = new XMLHttpRequest(),
-//     method = "GET",
-//     url = "https://cdn.jsdelivr.net/gh/ashleychuikay/tangram-comprehension@master/output/random_stims.csv";
-
-// xhr.open(method, url, true);
-
-// xhr.onreadystatechange = function () {
-//   if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-
-//     trials = $.csv.toArrays(xhr.responseText);
-    
-//     allTrials = new Array;
-
-//     for(i=1; i<trials.length; i++) {
-//     	if(trials[i][9] == subid){
-//     		allTrials.push(trials[i]);
-//     	} else {
-//     		return;
-//     	}
-//     };
-
-//    shuffle(allTrials)
-//    console.log(allTrials)
-//    startExperiment(allTrials)
-
-//   };
-// };
-// xhr.send();
-
 
 // disables all scrolling functionality to fix a slide in place on the ipad
 document.ontouchmove = function(event){
@@ -91,69 +60,47 @@ var trialAudio = [];
 var personList = [];
 
 
-function startExperiment() {
+function readData() {
 
+	console.log(subid)
+	// Read in random stimuli
+
+	// var xhr = new XMLHttpRequest(),
+	//     method = "GET",
+	//     url = "https://cdn.jsdelivr.net/gh/ashleychuikay/tangram-comprehension@master/output/random_stims.csv";
+
+	// xhr.open(method, url, true);
+
+	// xhr.onreadystatechange = function () {
+	//   if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+
+	//     trials = $.csv.toArrays(xhr.responseText);
+	//     console.log(trials)
+
+	//     testtrial = trials[1]
+	//     console.log(testtrial)
+
+	//    experiment.start(trials)
+
+	//   };
+	// };
+	// xhr.send();
 	// Read and select stimuli using D3
+	var trials = d3.csv("output/random_stims.csv").then(function(csv) {
+			trials = csv.filter(function(row) {
+				return row["subject"] == subid
+			});
+		d3.csvFormat(trials);
+		console.log(trials);
+	});
 
-	trials = d3.csv("https://cdn.jsdelivr.net/gh/ashleychuikay/tangram-comprehension@master/output/random_stims.csv", numconvert, function(csv) {
-		csv = csv.filter(function(row) {
-			return row[subject] == subid
-		})
-	})
+	setTimeout(function() {
+		allTrials = Object.values(trials)
+		console.log(allTrials)}, 500);
 
-	function numconvert(d){
-		d.occurence = +d.occurence
-		d.subid = +d.subid
-		d.trial = +d.trial
-		d.subject = +d.subject
-	}
-
-	allTrials = new Array;
-
-	    for(i=1; i<trials.length; i++) {
-	    	if(trials[i][9] == subid){
-	    		allTrials.push(trials[i]);
-	    	} else {
-	    		return;
-	    	}
-	    };
-
-	 shuffle(allTrials)
-	 console.log(allTrials)
-
-
-	//construct wordList for correct answers
-	for(i=0; i<allTrials.length; i++){
-		subTrial = allTrials[i].slice();
-		var word = subTrial[0];
-		wordList.push(word)
-	};
-
-	console.log(wordList)
-
-
-	//load images according to trial order
-	for(i=0; i<allTrials.length; i++) {
-		subImages = allTrials[i].slice();
-		items = subImages.splice(6,2);
-			
-		shuffle(items);
-		for(j=0; j<=1; j++) {
-			allImages.push(items[j]);
-		}	
-	};
-
-	// load audio for each trial
-	for(i=0; i<allTrials.length; i++){
-		subAudio = allTrials[i].slice();
-		audio = new WebAudioAPISound('"audio/' + subAudio.splice(3,1) + '"');
-		trialAudio.push(audio);
-	};
-
-	// load sounds for feedback after each trial
-	nextSound = new WebAudioAPISound("next");
-
+	// setTimeout(function(){experiment.start(trials)}, 800);
 };
+
 
 // MAIN EXPERIMENT
 var experiment = {
@@ -198,10 +145,59 @@ var experiment = {
 			return;
 		};
 
-		var subid = document.getElementById("subjectID").value;
-		console.log(subid)
+		subid = document.getElementById("subjectID").value;
 
-		startExperiment(subid)
+		readData(subid);
+	},
+
+	start: function() {
+
+		allTrials = new Array;
+
+		    for(i=1; i<trials.length; i++) {
+		    	if(trials[i][9] == subid){
+		    		allTrials.push(trials[i]);
+		    	} else {
+		    		return;
+		    	}
+		    };
+
+		 shuffle(allTrials)
+		 console.log(allTrials)
+
+		//construct wordList for correct answers
+		for(i=0; i<allTrials.length; i++){
+			subTrial = allTrials[i].slice();
+			var word = subTrial[0];
+			wordList.push(word)
+		};
+
+		console.log(wordList)
+
+
+		//load images according to trial order
+		for(i=0; i<allTrials.length; i++) {
+			subImages = allTrials[i].slice();
+			items = subImages.splice(6,2);
+				
+			shuffle(items);
+			for(j=0; j<=1; j++) {
+				allImages.push(items[j]);
+			}	
+		};
+
+		// load audio for each trial
+		for(i=0; i<allTrials.length; i++){
+			subAudio = allTrials[i].slice();
+			audio = new WebAudioAPISound('"audio/' + subAudio.splice(3,1) + '"');
+			trialAudio.push(audio);
+		};
+
+		// load sounds for feedback after each trial
+		nextSound = new WebAudioAPISound("audio/next");
+
+		experiment.study(0);
+
 	},
 
 	//the end of the experiment
@@ -241,17 +237,19 @@ var experiment = {
 		rightname = "images/" + allImages[1] + ".jpg";
 	   	objects_html += '<td align="center"><img class="pic" src="' + rightname +  '"alt="' + rightname + '" id= "rightPic"/></td>';
 		
-	  	objects_html += '</tr></table>';
-	    $("#objects").html(objects_html);
-		$("#stage").fadeIn();
+	  	setTimeout(function() {
+	  		objects_html += '</tr></table>';
+	    	$("#objects").html(objects_html);
+			$("#stage").fadeIn();
+			trialAudio[counter].play();
+		}, 500); 
 
 		clickDisabled = true;
 		setTimeout(function() {
 			clickDisabled = false;
 				// $('#objects').fadeTo(250, 1)
 		},  1500);
-
-		trialAudio[counter].play()
+		
 
 		var startTime = (new Date()).getTime();		
 
