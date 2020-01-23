@@ -14,36 +14,8 @@ checkInput: function() {
 	var subid = document.getElementById("subjectID").value;
 	console.log(subid)
 
+	startExperiment(subid)
 };
-
-// Read and select stimuli using D3
-
-trials = d3.csv("https://cdn.jsdelivr.net/gh/ashleychuikay/tangram-comprehension@master/output/random_stims.csv", numconvert, function(csv) {
-	csv = csv.filter(function(row) {
-		return row[subject] == subid
-	})
-})
-
-function numconvert(d){
-	d.occurence = +d.occurence
-	d.subid = +d.subid
-	d.trial = +d.trial
-	d.subject = +d.subject
-}
-
-allTrials = new Array;
-
-    for(i=1; i<trials.length; i++) {
-    	if(trials[i][9] == subid){
-    		allTrials.push(trials[i]);
-    	} else {
-    		return;
-    	}
-    };
-
-  shuffle(allTrials)
-  console.log(allTrials)
-  startExperiment(allTrials)
 
 
 
@@ -130,22 +102,47 @@ getCurrentTime = function() {
 
 //for trials
 var wordList = [];
-var matcherList = [];
-var matcherImages = [];
+var allImages = [];
 var trialAudio = [];
 var personList = [];
 
 
 function startExperiment() {
 
+	// Read and select stimuli using D3
+
+	trials = d3.csv("https://cdn.jsdelivr.net/gh/ashleychuikay/tangram-comprehension@master/output/random_stims.csv", numconvert, function(csv) {
+		csv = csv.filter(function(row) {
+			return row[subject] == subid
+		})
+	})
+
+	function numconvert(d){
+		d.occurence = +d.occurence
+		d.subid = +d.subid
+		d.trial = +d.trial
+		d.subject = +d.subject
+	}
+
+	allTrials = new Array;
+
+	    for(i=1; i<trials.length; i++) {
+	    	if(trials[i][9] == subid){
+	    		allTrials.push(trials[i]);
+	    	} else {
+	    		return;
+	    	}
+	    };
+
+	 shuffle(allTrials)
+	 console.log(allTrials)
+
+
 	//construct wordList for correct answers
 	for(i=0; i<allTrials.length; i++){
 		subTrial = allTrials[i].slice();
-
-		for(j=0; j<subTrial.length; j++){
-			var word = subTrial[j][0];
-			wordList.push(word)
-		}
+		var word = subTrial[0];
+		wordList.push(word)
 	};
 
 	console.log(wordList)
@@ -154,27 +151,19 @@ function startExperiment() {
 	//load images according to trial order
 	for(i=0; i<allTrials.length; i++) {
 		subImages = allTrials[i].slice();
-				
-		for(j=0; j<subImages.length;j++) {
-			newImages = subImages[j].slice();
-			items = newImages.splice(6,2);
+		items = subImages.splice(6,2);
 			
-			shuffle(items);
-			for(l=0; l<=1; l++) {
-				matcherList.push(items[l]);
-			}
+		shuffle(items);
+		for(j=0; j<=1; j++) {
+			allImages.push(items[j]);
 		}	
 	};
 
 	// load audio for each trial
 	for(i=0; i<allTrials.length; i++){
 		subAudio = allTrials[i].slice();
-
-		for(j=0; j<subAudio.length; j++) {
-			newAudio = subAudio[j].slice();
-			audio = '"' + newAudio.splice(3,1) + '"';
-			trialAudio.push(audio);
-		}
+		audio = new WebAudioAPISound('"' + subAudio.splice(3,1) + '"');
+		trialAudio.push(audio);
 	};
 
 	// load sounds for feedback after each trial
@@ -248,20 +237,20 @@ var experiment = {
 
 		// Create the object table for matcher (tr=table row; td= table data)
 
-		var matcherobjects_html = "";
+		var objects_html = "";
 	    
 	   	//HTML for the first object on the left
-		leftname = "images/" + matcherImages[0] + ".jpg";
-		matcherobjects_html += '<table align = "center" cellpadding="25"><tr></tr><tr><td align="center"><img class="pic" src="' + leftname +  '"alt="' + leftname + '" id= "leftPic"/></td>';
+		leftname = "images/" + allImages[0] + ".jpg";
+		objects_html += '<table align = "center" cellpadding="25"><tr></tr><tr><td align="center"><img class="pic" src="' + leftname +  '"alt="' + leftname + '" id= "leftPic"/></td>';
 
 
 		//HTML for the first object on the right
-		rightname = "images/" + matcherImages[1] + ".jpg";
-	   	matcherobjects_html += '<td align="center"><img class="pic" src="' + rightname +  '"alt="' + rightname + '" id= "rightPic"/></td>';
+		rightname = "images/" + allImages[1] + ".jpg";
+	   	objects_html += '<td align="center"><img class="pic" src="' + rightname +  '"alt="' + rightname + '" id= "rightPic"/></td>';
 		
-	  	matcherobjects_html += '</tr></table>';
-	    $("#objects").html(matcherobjects_html);
-		$("#matcherstage").fadeIn();
+	  	objects_html += '</tr></table>';
+	    $("#objects").html(objects_html);
+		$("#stage").fadeIn();
 	    
 
 	    var startTime = (new Date()).getTime();
@@ -286,8 +275,8 @@ var experiment = {
 
 	    	experiment.trialnum = counter;
 	    	experiment.word = wordList[0];
-	    	experiment.pic1 = matcherImages[0];
-	    	experiment.pic2 = matcherImages[1];
+	    	experiment.pic1 = allImages[0];
+	    	experiment.pic2 = allImages[1];
 	    	experiment.person = allTrials[experiment.trialnum][1];
 
 
@@ -304,17 +293,17 @@ var experiment = {
 	    		case "leftPic":
 	    			console.log("left")
 	    			experiment.side = "L";
-	    			experiment.chosenpic = matcherImages[0];
-	    			$("#leftPic4").attr("src", "images/"+ matcherImages[0] +"_color.jpg")
-	    			$("#rightPic4").attr("src", "images/"+ matcherImages[1] +".jpg")
+	    			experiment.chosenpic = allImages[0];
+	    			$("#leftPic").attr("src", "images/"+ allImages[0] +"_color.jpg")
+	    			$("#rightPic").attr("src", "images/"+ allImages[1] +".jpg")
 	    			break;
 
 	    		default: // "rightPic"
 	    			console.log("right")
 	    			experiment.side = "R";
-	    			experiment.chosenpic = matcherImages[1];
-	    			$("#rightPic4").attr("src", "images/"+ matcherImages[1] +"_color.jpg")
-	    			$("#leftPic4").attr("src", "images/"+ matcherImages[0] +".jpg")
+	    			experiment.chosenpic = allImages[1];
+	    			$("#rightPic").attr("src", "images/"+ allImages[1] +"_color.jpg")
+	    			$("#leftPic").attr("src", "images/"+ allImages[0] +".jpg")
 	    	};
 		
 	    	console.log(picID);
