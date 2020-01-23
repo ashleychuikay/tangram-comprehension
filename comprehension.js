@@ -1,23 +1,7 @@
 // Tangram comprehension task
 
-// Do all the following "on touch"?
-// Check subject id
-
-checkInput: function() {
-
-	// subject ID
-		if(document.getElementById("subjectID").value.length < 1) {
-		$("#checkMessage").html('<font color="red">You must input a subject ID</font>');
-		return;
-	};
-
-	var subid = document.getElementById("subjectID").value;
-	console.log(subid)
-
-	startExperiment(subid)
-};
-
-
+// to start at beginning
+showSlide("instructions");
 
 // Read in random stimuli
 
@@ -169,9 +153,6 @@ function startExperiment() {
 	// load sounds for feedback after each trial
 	nextSound = new WebAudioAPISound("next");
 
-	
-	// to start at beginning
-	showSlide("instructions");
 };
 
 // MAIN EXPERIMENT
@@ -207,21 +188,38 @@ var experiment = {
 		//time between start of trial and response 
 
 
+	// Check subject id
+
+	checkInput: function() {
+
+		// subject ID
+			if(document.getElementById("subjectID").value.length < 1) {
+			$("#checkMessage").html('<font color="red">You must input a subject ID</font>');
+			return;
+		};
+
+		var subid = document.getElementById("subjectID").value;
+		console.log(subid)
+
+		startExperiment(subid)
+	},
+
 	//the end of the experiment
     end: function () {
     	setTimeout(function () {
     		$("#stage").fadeOut();
+    	}, normalpause);
     	showSlide("finish");
     },
 
     //concatenates all experimental variables into a string which represents one "row" of data in the eventual csv, to live in the server
-	processOneRow: function () {
+	processOneRow: function() {
 		var dataforRound = experiment.subid; 
 		dataforRound += "," + experiment.age + "," + experiment.trialnum + "," + experiment.word;
-		dataforRound += "," + experiment.pic1 + "," + experiment.pic2; + "," + experiment.person;
+		dataforRound += "," + experiment.pic1 + "," + experiment.pic2 + "," + experiment.person;
 		dataforRound += "," + experiment.side + "," + experiment.chosenpic + "," + experiment.response;
 		dataforRound += "," + experiment.date + "," + experiment.timestamp + "," + experiment.reactiontime + "\n";
-		console.log(dataforRound)
+		console.log(dataforRound);
 		$.post("https://callab.uchicago.edu/experiments/tangram-comprehension/gamecode/tangramcomprehensionsave.php", {postresult_string : dataforRound});	
 	},
 
@@ -335,4 +333,5 @@ var experiment = {
 			}, 1000);
 
 		});
-	}
+	},
+}
