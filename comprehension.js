@@ -85,20 +85,24 @@ function readData() {
 	//   };
 	// };
 	// xhr.send();
+	
+	allTrials = new Array;
 	// Read and select stimuli using D3
 	var trials = d3.csv("output/random_stims.csv").then(function(csv) {
 			trials = csv.filter(function(row) {
 				return row["subject"] == subid
 			});
-		d3.csvFormat(trials);
+
 		console.log(trials);
+		for (i=0; i<trials.length; i++) {
+			newTrial = Object.values(trials[i]);
+			allTrials.push(newTrial);
+		};
+		
+	console.log(allTrials);
+	shuffle(allTrials);
+	experiment.start(allTrials);
 	});
-
-	setTimeout(function() {
-		allTrials = Object.values(trials)
-		console.log(allTrials)}, 500);
-
-	// setTimeout(function(){experiment.start(trials)}, 800);
 };
 
 
@@ -152,19 +156,6 @@ var experiment = {
 
 	start: function() {
 
-		allTrials = new Array;
-
-		    for(i=1; i<trials.length; i++) {
-		    	if(trials[i][9] == subid){
-		    		allTrials.push(trials[i]);
-		    	} else {
-		    		return;
-		    	}
-		    };
-
-		 shuffle(allTrials)
-		 console.log(allTrials)
-
 		//construct wordList for correct answers
 		for(i=0; i<allTrials.length; i++){
 			subTrial = allTrials[i].slice();
@@ -189,7 +180,7 @@ var experiment = {
 		// load audio for each trial
 		for(i=0; i<allTrials.length; i++){
 			subAudio = allTrials[i].slice();
-			audio = new WebAudioAPISound('"audio/' + subAudio.splice(3,1) + '"');
+			audio = new WebAudioAPISound("audio/" + subAudio.splice(3,1));
 			trialAudio.push(audio);
 		};
 
