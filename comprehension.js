@@ -88,7 +88,7 @@ function readData() {
 	
 	allTrials = new Array;
 	// Read and select stimuli using D3
-	var trials = d3.csv("output/random_stims.csv").then(function(csv) {
+	var trials = d3.csv("https://cdn.jsdelivr.net/gh/ashleychuikay/tangram-comprehension@master/output/random_stims.csv").then(function(csv) {
 			trials = csv.filter(function(row) {
 				return row["subject"] == subid
 			});
