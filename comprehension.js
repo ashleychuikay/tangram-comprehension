@@ -228,25 +228,20 @@ var experiment = {
 		rightname = "images/" + allImages[1] + ".jpg";
 	   	objects_html += '<td align="center"><img class="pic" src="' + rightname +  '"alt="' + rightname + '" id= "rightPic"/></td>';
 		
-	  	setTimeout(function() {
-	  		objects_html += '</tr></table>';
-	    	$("#objects").html(objects_html);
-			$("#stage").fadeIn();
-			trialAudio[counter].play();
-		}, 500); 
+  		objects_html += '</tr></table>';
+    	$("#objects").html(objects_html);
+		$("#stage").fadeIn();
+		trialAudio[counter].play();
 
 		clickDisabled = true;
 		setTimeout(function() {
 			clickDisabled = false;
-				// $('#objects').fadeTo(250, 1)
 		},  1500);
 		
 
 		var startTime = (new Date()).getTime();		
 
 		$('.pic').on('click touchstart', function(event) {
-
-			// counter = globalGame.trialnum;
 
 	    	if (clickDisabled) return;
 	    	
