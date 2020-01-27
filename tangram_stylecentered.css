@@ -135,13 +135,6 @@ This stuff will vary by experiment.
 }
 
 
-/*target picture on director practice*/
-.ptarget {
-	border-style: solid; 
-	border-width: 8px;
-	border-color: blue;
-}
-
 
 #practiceobjects {
 	margin-top: 15%;
@@ -151,23 +144,8 @@ This stuff will vary by experiment.
 
 }
 
-#practiceobjects2 {
-	margin-top: 15%;
-	overflow: hidden;
-	/* prevents grey highlighting from flashing on ipad when using on touchstart */
-	-webkit-tap-highlight-color: rgba(0,0,0,0);
-
-}
 
 #objects {
-	margin-top: 15%;
-	overflow: hidden;
-		/* prevents grey highlighting from flashing on ipad when using on touchstart */
-	-webkit-tap-highlight-color: rgba(0,0,0,0);
-
-}
-
-#objects2 {
 	margin-top: 15%;
 	overflow: hidden;
 		/* prevents grey highlighting from flashing on ipad when using on touchstart */
@@ -200,39 +178,6 @@ This stuff will vary by experiment.
 	max-height: 295px;
 }
 
-#leftPic2 {
-	width: 295px;
-	max-height: 295px;
-}
-
-
-#rightPic2 {
-	width: 295px;
-	max-height: 295px;
-}
-
-#leftPic3 {
-	width: 295px;
-	max-height: 295px;
-}
-
-
-#rightPic3 {
-	width: 295px;
-	max-height: 295px;
-}
-
-#leftPic4 {
-	width: 295px;
-	max-height: 295px;
-}
-
-
-#rightPic4 {
-	width: 295px;
-	max-height: 295px;
-}
-
 #stage {
 	background: url(field2.jpg) no-repeat center center fixed;
 	-webkit-background-size: cover;
@@ -240,38 +185,6 @@ This stuff will vary by experiment.
 	-o-background-size: cover;
 	background-size: cover;
 	margin: auto;
-}
-
-#parent {
-	width: 95%;
-	height: 95%;
-	text-align: center;
-	padding-top: 20px;
-	font-size: 40px;
-	overflow: hidden;
-}
-
-#child {
-	text-align: center;
-	margin-top: 10%;
-	font-size: 40px;
-	overflow: hidden;
-}
-
-#parentpractice {
-	text-align: center;
-	margin: 0 auto;
-	margin-top: 10%;
-	font-size: 60px;
-	overflow: hidden;
-}
-
-#parentstudy {
-	text-align: center;
-	margin: 0 auto;
-	margin-top: 10%;
-	font-size: 60px;
-	overflow: hidden;
 }
 
 #finish {

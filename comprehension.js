@@ -236,6 +236,7 @@ var experiment = {
 		clickDisabled = true;
 		setTimeout(function() {
 			clickDisabled = false;
+			console.log("click disabled");
 		},  1500);
 		
 
@@ -298,8 +299,6 @@ var experiment = {
 
 			//Process the data to be saved
 			experiment.processOneRow();
-
-			console.log(matcherImages);
 
 			setTimeout(function() {
 				$(".pic").delay().fadeOut(1500);
