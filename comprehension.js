@@ -150,6 +150,10 @@ var experiment = {
 		};
 
 		subid = document.getElementById("subjectID").value;
+		age = document.getElementById("age").value;
+
+  		experiment.subid = subid;
+  		experiment.age = age;
 
 		readData(subid);
 	},
@@ -207,12 +211,13 @@ var experiment = {
 		dataforRound += "," + experiment.side + "," + experiment.chosenpic + "," + experiment.response;
 		dataforRound += "," + experiment.date + "," + experiment.timestamp + "," + experiment.reactiontime + "\n";
 		console.log(dataforRound);
-		$.post("https://callab.uchicago.edu/experiments/tangram-comprehension/gamecode/tangramcomprehensionsave.php", {postresult_string : dataforRound});	
+		$.post("https://callab.uchicago.edu/experiments/tangram-comprehension/tangramcomprehensionsave.php", {postresult_string : dataforRound});	
 	},
 
 	//Comprehension game
   	study: function(counter) {
 
+  		$("#blank").click();
 		$("#instructions").hide();
 
 		// Create the object table for matcher (tr=table row; td= table data)
@@ -230,13 +235,18 @@ var experiment = {
 		
   		objects_html += '</tr></table>';
     	$("#objects").html(objects_html);
-		$("#stage").fadeIn();
-		trialAudio[counter].play();
+		
+    	setTimeout(function () {
+			$("#stage").fadeIn();
+			setTimeout(function() {
+				trialAudio[counter].play();
+			}, 200);    		
+    	}, 200);
+
 
 		clickDisabled = true;
 		setTimeout(function() {
 			clickDisabled = false;
-			console.log("click disabled");
 		},  1500);
 		
 
