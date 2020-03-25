@@ -53,52 +53,6 @@ function getCurrentTime () {
   return (hours + ":" + minutes + ":" + seconds);
 }
 
-// function readData() {
-
-//   console.log(subid)
-//   // Read in random stimuli
-
-//   // var xhr = new XMLHttpRequest(),
-//   //     method = "GET",
-//   //     url = "https://cdn.jsdelivr.net/gh/ashleychuikay/tangram-comprehension@master/output/random_stims.csv";
-
-//   // xhr.open(method, url, true);
-
-//   // xhr.onreadystatechange = function () {
-//   //   if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-
-//   //     trials = $.csv.toArrays(xhr.responseText);
-//   //     console.log(trials)
-
-//   //     testtrial = trials[1]
-//   //     console.log(testtrial)
-
-//   //    experiment.start(trials)
-
-//   //   };
-//   // };
-//   // xhr.send();
-  
-//   allTrials = new Array;
-//   // Read and select stimuli using D3
-//   var trials = d3.csv("https://cdn.jsdelivr.net/gh/ashleychuikay/tangram-comprehension@master/output/random_stims.csv").then(function(csv) {
-//     trials = csv.filter(function(row) {
-//       return row["subject"] == subid
-//     });
-
-//     console.log(trials);
-//     for (i=0; i<trials.length; i++) {
-//       newTrial = Object.values(trials[i]);
-//       allTrials.push(newTrial);
-//     };
-    
-//     console.log(allTrials);
-//     shuffle(allTrials);
-//     experiment.start(allTrials);
-//   });
-// };
-
-
 // MAIN EXPERIMENT
 class Experiment {
   constructor() {
@@ -108,8 +62,6 @@ class Experiment {
     this.age = "";
     //inputed at beginning of experiment
     this.trialnum = 0;
-    //trial number
-    this.order = 1;
     //whether child received list 1 or list 2
     this.target = "";
     //word that child is queried on
