@@ -18,7 +18,7 @@ const normalpause = 1500;
 
 //pause after picture chosen
 const timeafterClick = 1000;
-const nextSound = new WebAudioAPISound("audio/next");
+//const nextSound = new WebAudioAPISound("/static/audio/next");
 
 // ---------------- HELPER ------------------
 
@@ -80,9 +80,10 @@ class Experiment {
     this.date = getCurrentDate();
     //the date of the experiment
     this.timestamp = getCurrentTime();
-
     //the time that the trial was completed at 
     this.reactiontime = 0;
+
+    $('#audioPlayButton').on('click', this.playAudio.bind(this));
   }
 
   // Check subject id
@@ -95,8 +96,13 @@ class Experiment {
     this.socket.on('onConnected', function(mongoData) {
       this.subid = mongoData['id'];
       this.trials = mongoData['trials'];
-      this.study(0);
-    });
+      this.preloadedAudio = _.map(this.trials, (trial) => {
+	return new WebAudioAPISound("/static/audio/" + trial['audio']);
+      });
+      setTimeout(function() {
+	this.study(0);
+      }.bind(this));
+    }.bind(this));
   };
 
   //the end of the experiment
@@ -122,24 +128,27 @@ class Experiment {
   };
 
   //Comprehension game
-  study(counter) {
-    var currTrial = this.trials[counter];
-    this.trialnum = counter;
+  study(trialnum) {
+    var currTrial = this.trials[trialnum];
+    this.trialnum = trialnum;
+    this.clickDisabled = true;
     this.startTime = (new Date()).getTime();
     this.target = currTrial['target'];
     this.leftpic = currTrial['leftpic'];
     this.rightpic = currTrial['rightpic'];
     this.person = currTrial['person'];
-	  
+    
     $("#blank").click();
     $("#instructions").hide();
+    $("#objects").hide();
+    $("#stage").fadeIn();    
 
     // Create the object table for matcher (tr=table row; td= table data)
     var objects_html = "";
     
     //HTML for the objects on the left & right
-    var leftname = "images/" + currTrial['leftpic'] + ".jpg";
-    var rightname = "images/" + currTrial['rightpic'] + ".jpg";
+    var leftname = "static/images/" + currTrial['leftpic'] + ".jpg";
+    var rightname = "static/images/" + currTrial['rightpic'] + ".jpg";
     $("#objects").html('\
       <table align = "center" cellpadding="25"> \
         <tr></tr>\
@@ -152,34 +161,31 @@ class Experiment {
           </td>\
         </tr>\
       </table>'
-    );
+    ).fadeIn(1000);
+    $("#audioPlayButton").delay().fadeIn(1000);      
+    $('.pic').on('click touchstart', this.handleClick.bind(this));    
+  }
 
+  playAudio(event) {
     // Play audio
-    setTimeout(function () {
-      $("#stage").fadeIn();
-      setTimeout(function() {
-	var audio = new WebAudioAPISound("audio/" + currTrial['audio']);
-	audio.play();
-      }, 200);    		
-    }, 200);
+    var audio = this.preloadedAudio[this.trialnum];
+    audio.play();
 
-    // Only allow to click after 1.5s
-    this.clickDisabled = true;
-    setTimeout(function() {
-      this.clickDisabled = false;
-    }.bind(this),  1500);
-    
-    $('.pic').on('click touchstart', this.handleClick.bind(this));
+    // Only allow to click tangram after audio 
+    this.clickDisabled = false;
   }
 
   handleClick(event) {
     // don't count click if disabled
     // but disable subsequent clicks once the participant has made their choice
-    if (this.clickDisabled)
+    if (this.clickDisabled) {
+      $('#error').fadeIn();
+      setTimeout(function() {$('#error').fadeOut();}, 1500);
       return;
-    else 
+    } else {
       this.clickDisabled = true; 
-
+    }
+    
     // time the participant clicked picture - the time the trial began
     this.reactiontime = (new Date()).getTime() - this.startTime;
 
@@ -188,13 +194,13 @@ class Experiment {
     if(picID == "leftPic") {
       this.side = "L";
       this.chosenpic = this.leftpic;
-      $("#leftPic").attr("src", "images/"+ this.leftpic +"_color.jpg");
-      $("#rightPic").attr("src", "images/"+ this.rightpic +".jpg");
+      $("#leftPic").attr("src", "static/images/"+ this.leftpic +"_color.jpg");
+      $("#rightPic").attr("src", "static/images/"+ this.rightpic +".jpg");
     } else if(picID == "rightPic") {
       this.side = "R";
       this.chosenpic = this.rightpic;
-      $("#rightPic").attr("src", "images/"+ this.rightpic +"_color.jpg");
-      $("#leftPic").attr("src", "images/"+ this.leftpic +".jpg");
+      $("#rightPic").attr("src", "static/images/"+ this.rightpic +"_color.jpg");
+      $("#leftPic").attr("src", "static/images/"+ this.leftpic +".jpg");
     } else {
       console.error('unknown picID:', picID);
     };
@@ -212,14 +218,15 @@ class Experiment {
 
     // Play sound at end of trial
     setTimeout(function() {
-      nextSound.play();
+      //nextSound.play();
     }, 100);
 
     //Process the data to be saved
     this.processOneRow();
 
     setTimeout(function() {
-      $(".pic").delay().fadeOut(1500);
+      $(".pic").delay().fadeOut(1000);
+      $("#audioPlayButton").delay().fadeOut(1000);      
       document.getElementById("blank").click();
       setTimeout(function() {
 	if (this.trialnum + 1 === numTrials) {
@@ -231,3 +238,5 @@ class Experiment {
     }.bind(this), 1000);
   }
 }
+
+var experiment = new Experiment();
