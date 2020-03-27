@@ -16,41 +16,43 @@
   </head>
   <body>
 
-  	<div class="slide" id="instructions">
-    <img src="logo.rgb.maroon.jpg" alt="University of Chicago"> 
-        <p id='logo-text'>University of Chicago Communication and Learning Lab</p>
-   
-        <p class="block-text">Welcome to the tangram study. Enter relevant information below:</p>
+    <div class="slide" id="instructions">
+      <img src="logo.rgb.maroon.jpg" alt="University of Chicago"> 
+      <p id='logo-text'>University of Chicago Communication and Learning Lab</p>
+      
+      <p class="block-text">Welcome to the tangram study. Enter relevant information below:</p>
 
-        <p class="block-text">
-          subject ID: <br>
-          <input type="text" id="subjectID" name="subjectID" size="30">
-          <br> 
-          age: <br>
-          <input type="text" id="age" name="age" size="30"> 
-        </p>
+      <p class="block-text">
+        subject ID: <br>
+        <input type="text" id="subjectID" name="subjectID" size="30">
+        <br> 
+        age: <br>
+        <input type="text" id="age" name="age" size="30"> 
+      </p>
 
-        <button type="button" id="beforeStudy" onClick="this.blur(); experiment.getStims()">Start</button>
+      <button type="button" id="beforeStudy" onClick="this.blur(); experiment.start()">Start</button>
 
-        <div id="checkMessage"> </div> <!--dynamically built in javascript-->
+      <div id="checkMessage"> </div> <!--dynamically built in javascript-->
     </div>
 
-    <div class="slide" id="blank">
-    <center><button type="button" id="empty"></button></center>
-    <p> Blank </p>
-  </div>
-  
-  <div class="slide" id="stage">
-    <div id="objects"> </div>
-  </div>
+    <div class="slide" id="blank">      
+      <center><button type="button" id="empty"></button></center>
+      <p> Blank </p>
+    </div>
+    
+    <div class="slide" id="stage">
+      <button id="audioPlayButton" style="display: block; margin: 10% auto;"> Play </button>
+      <div id="objects"> </div>
+      <p id="error" style="text-align: center; display:none"> Please click "play" to listen to the description before responding </p>
+    </div>
 
     <div class="slide" id="finish">
       <p>This is the end of the study.</p>
       <p>Thank you so much for participating!</p>
     </div>
-
+    
     <script src="/static/webAudio.js"></script>
-    <script src="comprehension.js"></script>
+    <script src="/static/comprehension.js"></script>
     
   </body>
 </html>
