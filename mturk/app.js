@@ -143,8 +143,8 @@ function initializeWithTrials(socket) {
   const gameid = UUID();
   sendPostRequest('http://localhost:6004/db/getstims', {
     json: {
-      dbname: 'bayesian-persuasion',
-      colname: 'experiment1_stimuli',
+      dbname: 'tangrams-comprehension',
+      colname: 'trial_set_stimuli',
       gameid: gameid
     }
   }, (error, res, body) => {
@@ -154,16 +154,12 @@ function initializeWithTrials(socket) {
       var packet = _.extend({}, _.omit(body, ["_id", "numGames", "games"]), {
       	gameid: gameid
       });
-      console.log('got condition packet from db: ', packet);
+      console.log('got condition packet from db: ', JSON.stringify(packet));
       socket.emit('onConnected', packet);
     } else {
-      console.log(`error getting stims: ${error} ${body}`);
-      console.log('returning hard-coded sticks');
-      socket.emit('onConnected', {
-	gameid: gameid,
-	agent1stick: .1,
-	agent2stick: .7
-      });
+      console.log(`local database not found: ${error} ${body}`);
+      console.log('returning hard-coded trial set');
+      socket.emit('onConnected', require('./static/example_trial_set.json'));
     }
   });
 }
