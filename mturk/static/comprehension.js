@@ -81,8 +81,7 @@ class Experiment {
   constructor() {
     // initialize socket to talk to server
     this.subid = "";
-    //inputed at beginning of experiment
-    this.age = "";
+
     //inputed at beginning of experiment
     this.trialnum = 0;
     //whether child received list 1 or list 2
@@ -106,12 +105,17 @@ class Experiment {
     //the time that the trial was completed at
     this.reactiontime = 0;
 
+    this.data = [];
+
     $('#audioPlayButton').on('click', this.playAudio.bind(this));
   }
 
   // Check subject id
 
   start() {
+
+  	experiment.data.push("subid, trialnum, target, leftpic, rightpic, person, side, chosenpic, response, datae, timestamp, reactiontime");
+
     // initialize connection to server
     this.socket = io.connect();
 
@@ -133,21 +137,25 @@ class Experiment {
     setTimeout(function () {
       $("#stage").fadeOut();
     }, normalpause);
+
+    console.log(experiment.data)
+    setTimeout(function() { turk.submit(experiment, true) }, 1500);
     showSlide("finish");
+
   };
 
   //concatenates all experimental variables into a string which
   //represents one "row" of data in the eventual csv, to live in the
   //server
   processOneRow () {
-    var dataforRound = this.subid;
-    dataforRound += "," + this.age + "," + this.trialnum + "," + this.target;
+    var dataforRound = this.subid + "," + this.trialnum + "," + this.target;
     dataforRound += "," + this.leftpic + "," + this.rightpic + "," + this.person;
     dataforRound += "," + this.side + "," + this.chosenpic + "," + this.response;
     dataforRound += "," + this.date + "," + this.timestamp + "," + this.reactiontime + "\n";
-    console.log(dataforRound);
-    $.post("https://callab.uchicago.edu/experiments/tangram-comprehension/tangramcomprehensionsave.php",
-	   {postresult_string : dataforRound});
+     console.log(dataforRound);
+    // $.post("https://callab.uchicago.edu/experiments/tangram-comprehension/tangramcomprehensionsave.php",
+	  //  {postresult_string : dataforRound});
+    experiment.data.push(dataforRound);
   };
 
   //Comprehension game
