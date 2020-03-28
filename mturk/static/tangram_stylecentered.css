@@ -24,14 +24,14 @@ body {
 	position: absolute;
 	margin: 0;
 /*	margin-left: 0.5%;
-	
+
 	padding: 1% 2% 1% 2%;*/
 }
 
 input, select, button {font-family: Georgia, serif; font-size: 14px;}
 
 button {
-	background: url(button-gradient.png);
+	background: url(images/button-gradient.png);
 	border: 1px solid #999;
 	border-top: 1px solid #e0e0e0;
 	border-left: 1px solid #e0e0e0;
@@ -78,7 +78,7 @@ button:active {
 }
 
 button[disabled] {
-	background: url(zen-button.png);
+	/* background: url(zen-button.png); */
 	border: 1px solid #999;
 	border-top: 1px solid #e0e0e0;
 	border-left: 1px solid #e0e0e0;
@@ -97,6 +97,10 @@ This stuff will vary by experiment.
   font-weight: bold;
 }
 
+#consent {
+  text-align: center;
+}
+
 #instructions {
   text-align: center;
 }
@@ -107,6 +111,13 @@ This stuff will vary by experiment.
 
 #prestudy {
 	text-align: center;
+}
+
+.block-text-wide {
+  width: 1000px;
+  text-align: left;
+  margin: 0 auto;
+  margin-bottom: 1em;
 }
 
 .block-text {
@@ -160,7 +171,7 @@ This stuff will vary by experiment.
 
 /*target picture on director study*/
 .target {
-	border-style: solid; 
+	border-style: solid;
 	border-width: 8px;
 	border-color: blue;
 }
@@ -179,7 +190,7 @@ This stuff will vary by experiment.
 }
 
 #stage {
-	background: url(field2.jpg) no-repeat center center fixed;
+	/*background: url(field2.jpg) no-repeat center center fixed;*/
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;

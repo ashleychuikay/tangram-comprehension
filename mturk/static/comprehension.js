@@ -1,7 +1,7 @@
 // Tangram comprehension task
 
 // to start at beginning
-showSlide("instructions");
+showSlide("consent");
 
 
 // disables all scrolling functionality to fix a slide in place on the ipad
@@ -21,6 +21,29 @@ const timeafterClick = 1000;
 //const nextSound = new WebAudioAPISound("/static/audio/next");
 
 // ---------------- HELPER ------------------
+
+  //get radiobutton values for consent
+  const getCheckedRadioValue = (name) => {
+  	const radios = document.getElementsByName(name);
+    try {
+    	// calling .value without a "checked" property with throw an exception.
+    	return Array.from(radios).find((r, i) => radios[i].checked).value
+    } catch(e) { }
+  }
+
+  function form_ok() {
+    return getCheckedRadioValue('age') == "eighteen" &&
+    getCheckedRadioValue('understand') == "understood" &&  getCheckedRadioValue('give_consent') == "consent"
+  }
+
+  function disable(id){
+  document.getElementById(id).disabled = 'disabled';
+  }
+  function enable(id){
+    if(form_ok()) {
+      document.getElementById(id).disabled = '';
+    }
+  }
 
 // show slide function
 function showSlide(id) {
@@ -80,7 +103,7 @@ class Experiment {
     this.date = getCurrentDate();
     //the date of the experiment
     this.timestamp = getCurrentTime();
-    //the time that the trial was completed at 
+    //the time that the trial was completed at
     this.reactiontime = 0;
 
     $('#audioPlayButton').on('click', this.playAudio.bind(this));
@@ -91,7 +114,7 @@ class Experiment {
   start() {
     // initialize connection to server
     this.socket = io.connect();
-    
+
     // begin first trial as soon as we hear back from the server
     this.socket.on('onConnected', function(mongoData) {
       this.subid = mongoData['id'];
@@ -117,14 +140,14 @@ class Experiment {
   //represents one "row" of data in the eventual csv, to live in the
   //server
   processOneRow () {
-    var dataforRound = this.subid; 
+    var dataforRound = this.subid;
     dataforRound += "," + this.age + "," + this.trialnum + "," + this.target;
     dataforRound += "," + this.leftpic + "," + this.rightpic + "," + this.person;
     dataforRound += "," + this.side + "," + this.chosenpic + "," + this.response;
     dataforRound += "," + this.date + "," + this.timestamp + "," + this.reactiontime + "\n";
     console.log(dataforRound);
     $.post("https://callab.uchicago.edu/experiments/tangram-comprehension/tangramcomprehensionsave.php",
-	   {postresult_string : dataforRound});	
+	   {postresult_string : dataforRound});
   };
 
   //Comprehension game
@@ -137,15 +160,15 @@ class Experiment {
     this.leftpic = currTrial['leftpic'];
     this.rightpic = currTrial['rightpic'];
     this.person = currTrial['person'];
-    
+
     $("#blank").click();
     $("#instructions").hide();
     $("#objects").hide();
-    $("#stage").fadeIn();    
+    $("#stage").fadeIn();
 
     // Create the object table for matcher (tr=table row; td= table data)
     var objects_html = "";
-    
+
     //HTML for the objects on the left & right
     var leftname = "static/images/" + currTrial['leftpic'] + ".jpg";
     var rightname = "static/images/" + currTrial['rightpic'] + ".jpg";
@@ -162,8 +185,8 @@ class Experiment {
         </tr>\
       </table>'
     ).fadeIn(1000);
-    $("#audioPlayButton").delay().fadeIn(1000);      
-    $('.pic').on('click touchstart', this.handleClick.bind(this));    
+    $("#audioPlayButton").delay().fadeIn(1000);
+    $('.pic').on('click touchstart', this.handleClick.bind(this));
   }
 
   playAudio(event) {
@@ -171,7 +194,7 @@ class Experiment {
     var audio = this.preloadedAudio[this.trialnum];
     audio.play();
 
-    // Only allow to click tangram after audio 
+    // Only allow to click tangram after audio
     this.clickDisabled = false;
   }
 
@@ -183,9 +206,9 @@ class Experiment {
       setTimeout(function() {$('#error').fadeOut();}, 1500);
       return;
     } else {
-      this.clickDisabled = true; 
+      this.clickDisabled = true;
     }
-    
+
     // time the participant clicked picture - the time the trial began
     this.reactiontime = (new Date()).getTime() - this.startTime;
 
@@ -204,7 +227,7 @@ class Experiment {
     } else {
       console.error('unknown picID:', picID);
     };
-    
+
     console.log(picID);
 
     // If the child picked the picture that matched with the target,
@@ -226,7 +249,7 @@ class Experiment {
 
     setTimeout(function() {
       $(".pic").delay().fadeOut(1000);
-      $("#audioPlayButton").delay().fadeOut(1000);      
+      $("#audioPlayButton").delay().fadeOut(1000);
       document.getElementById("blank").click();
       setTimeout(function() {
 	if (this.trialnum + 1 === numTrials) {
