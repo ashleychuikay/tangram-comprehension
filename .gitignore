@@ -4,4 +4,7 @@
 *Rhistory
 
 audio/*
+mturk/static/audio/*
+mturk/node_modules/*
+mturk/package-lock.json
 .Rproj.user
