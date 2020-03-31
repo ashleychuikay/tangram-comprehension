@@ -69,19 +69,15 @@
 
     <div class="slide" id="instructions">
       <img src="static/images/cmu_logo.png" alt="Carnegie Mellon University">
-      <p id='logo-text'>University of Chicago Communication and Learning Lab</p>
-<!--
-      <p class="block-text">Welcome to the tangram study. Enter relevant information below:</p> -->
-<!--
-      <p class="block-text">
-        subject ID: <br>
-        <input type="text" id="subjectID" name="subjectID" size="30">
-        <br>
-        age: <br>
-        <input type="text" id="age" name="age" size="30">
-      </p> -->
+      <p id='logo-text'>Communication and Learning Lab</p>
 
-      <button type="button" id="beforeStudy" onClick="this.blur(); experiment.start()">Start</button>
+      <p class="block-text">Welcome to the study!</p> 
+
+      <p class="block-text">In this study, you will be choosing pictures based on audio that you hear. On each trial, you will see two pictures, and a "play" button. Click the "Play" button to hear an audio recording describing one of the pictures. Click the picture that you think the recording is describing. Please listen to the entire recording before clicking a picture. The picture that you click will change color, regardless of accuracy. Then a new trial will begin.</p>
+
+      <p class="block-text">Before beginning the study, please make sure that your device audio is on. To test your audio, please click the "Play" button below, and follow the instructions you hear. Then, press "Continue" to start the study.</p>
+
+      <button type="button" id="beforeStudy" onClick="this.blur(); experiment.start()">Continue</button>
 
       <div id="checkMessage"> </div> <!--dynamically built in javascript-->
     </div>
